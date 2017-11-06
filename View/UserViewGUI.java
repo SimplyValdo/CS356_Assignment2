@@ -1,12 +1,23 @@
-package minitwitter;
+package View;
 
-public class UserViewGUI extends javax.swing.JFrame {
+import Interfaces.Windows;
+import Model.User;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
+public class UserViewGUI extends javax.swing.JFrame implements Windows {
+
+    private User user;
+    DefaultListModel list1;
+    DefaultListModel list2;
     /**
      * Creates new form UserViewGUI
      */
-    public UserViewGUI() {
-        initComponents();
+    public UserViewGUI(User currentUser) {
+        
+        this.user = currentUser;
+        list1 = new DefaultListModel();
+        list2 = new DefaultListModel();
     }
 
     /**
@@ -37,12 +48,9 @@ public class UserViewGUI extends javax.swing.JFrame {
 
         postTweet.setText("POST TWEET");
 
-        currentFollowing.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane2.setViewportView(currentFollowing);
+        list1.addElement("Followers");
+        currentFollowing.setModel(list1);
 
         TweetMessage.setColumns(10);
         TweetMessage.setRows(5);
@@ -50,12 +58,9 @@ public class UserViewGUI extends javax.swing.JFrame {
 
         followUser.setText("FOLLOW USER");
 
-        newsFeed.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane4.setViewportView(newsFeed);
+        list2.addElement("NewsFeed");
+        newsFeed.setModel(list2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -106,39 +111,17 @@ public class UserViewGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
+    @Override
     public void display() {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UserViewGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UserViewGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UserViewGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UserViewGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new UserViewGUI().setVisible(true);
-            }
-        });
+        
+        initComponents();
+        this.setVisible(true);
+        this.setTitle(user.toString());
+    }
+    
+    @Override
+    public void PopUpMessage(String message, int messageType){
+          JOptionPane.showMessageDialog(null, message, "Alert", messageType);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

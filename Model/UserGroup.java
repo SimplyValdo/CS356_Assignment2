@@ -1,9 +1,11 @@
-package minitwitter;
+package Model;
 
+import Model.User;
+import DesignPatterns.CompositePattern;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserGroup {
+public class UserGroup implements CompositePattern{
     
     private String uniqueID;
     private List<User> users;
@@ -25,6 +27,11 @@ public class UserGroup {
     }
     
     public String toString(){
+        return this.uniqueID;
+    }
+    
+    @Override
+    public String  getUniqueID() {
         return this.uniqueID;
     }
 }

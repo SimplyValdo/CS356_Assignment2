@@ -108,6 +108,9 @@
           <Events>
             <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="jTree1ValueChanged"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="jTree1.setCellRenderer(new CustomTreeCellRenderer());"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

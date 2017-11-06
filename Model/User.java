@@ -1,9 +1,10 @@
-package minitwitter;
+package Model;
 
+import DesignPatterns.CompositePattern;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User  { 
+public class User implements CompositePattern { 
     
     private String uniqueID;
     private List<User> followers;
@@ -18,6 +19,7 @@ public class User  {
         this.newsFeed = new ArrayList<>();
     }
 
+    @Override
     public String getUniqueID() {
         return uniqueID;
     }

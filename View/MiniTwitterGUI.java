@@ -1,12 +1,16 @@
-package minitwitter;
+package View;
 
+import Interfaces.Windows;
+import Model.UserGroup;
+import Model.User;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import minitwitter.CustomTreeCellRenderer;
 
-public class MiniTwitterGUI extends javax.swing.JFrame {
+public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
     
     //JTree
     private DefaultMutableTreeNode root;
@@ -23,9 +27,6 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
     private List<String> groups;
     private List<UserViewGUI> usersInterface;
     
-    //Interface
-    private CompositePattern message;
-    
     /**
      * Creates new form MiniTwitterGUI
      */
@@ -33,6 +34,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
        
         rootGroup = new UserGroup("Root");
         currentGroup = rootGroup;
+        
         root = new DefaultMutableTreeNode(rootGroup, true);
         currentGroupTreeNode = root;
         model = new DefaultTreeModel(root); 
@@ -40,8 +42,6 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
         users = new ArrayList<>();
         usersInterface = new ArrayList<>();
         groups = new ArrayList<>();
-       
-        initComponents();
     }
 
     /**
@@ -69,6 +69,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jTree1.setCellRenderer(new CustomTreeCellRenderer());
         jTree1.setModel(model);
         jTree1.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
@@ -177,12 +178,10 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
         String inputText = addGroupTextArea.getText();
         
         if(inputText.isEmpty()){
-            message = new PopUpMessage();
-            message.displayMessage("Group name is empty", JOptionPane.WARNING_MESSAGE);
+            PopUpMessage("Group name is empty", JOptionPane.WARNING_MESSAGE);
         }
         else if(!usernameAvailability(inputText)){
-            message = new PopUpMessage();
-            message.displayMessage("This Group name is not available", JOptionPane.WARNING_MESSAGE);
+            PopUpMessage("This Group name is not available", JOptionPane.WARNING_MESSAGE);
         }
         else{
             UserGroup addingNewGroup = new UserGroup(inputText);
@@ -201,12 +200,10 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
 
     private void openUserViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openUserViewActionPerformed
         if(currentUserTreeNode == null){
-            message = new PopUpMessage();
-            message.displayMessage("A user has not been selected", JOptionPane.WARNING_MESSAGE);
+            PopUpMessage("A user has not been selected", JOptionPane.WARNING_MESSAGE);
         }
         else{
-            UserViewGUI program = new UserViewGUI();
-            program.display();
+            runSecondJFrame();
         }
     }//GEN-LAST:event_openUserViewActionPerformed
 
@@ -224,9 +221,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
              currentUser = null;
              currentUserTreeNode = null;
              currentGroup = (UserGroup) node.getUserObject();
-             currentGroupTreeNode = node;
-             
-             
+             currentGroupTreeNode = node;   
          }
         
         System.out.println("CurrentUser: " + currentUser);
@@ -241,19 +236,17 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
         String inputText = addUserTextArea.getText();
         
         if(inputText.isEmpty()){
-            message = new PopUpMessage();
-            message.displayMessage("Username is empty", JOptionPane.WARNING_MESSAGE);
+            PopUpMessage("Username is empty", JOptionPane.WARNING_MESSAGE);
         }
         else if(!usernameAvailability(inputText)){
-            message = new PopUpMessage();
-            message.displayMessage("This Username is not available", JOptionPane.WARNING_MESSAGE);
+            PopUpMessage("This Username is not available", JOptionPane.WARNING_MESSAGE);
         }
         else{
             User currentUser = new User(inputText);
             users.add(inputText);
             currentGroup.AddUser(currentUser);
             
-            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(currentUser, true);
+            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(currentUser, false);
             currentGroupTreeNode.add(newNode);
             model.reload();
             expandJTree();
@@ -261,41 +254,6 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_addUserActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public void display() {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MiniTwitterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MiniTwitterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MiniTwitterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MiniTwitterGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MiniTwitterGUI().setVisible(true);
-            }
-        }); 
-    }
-    
     public boolean usernameAvailability(String userName){
         
          for(String eachUser : users){
@@ -320,6 +278,26 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
             jTree1.expandRow(i);
         }
     }
+    
+    @Override
+    public void display() {
+        
+        initComponents();
+        this.setVisible(true);
+    }
+    
+    @Override
+    public void PopUpMessage(String message, int messageType){
+        JOptionPane.showMessageDialog(null, message, "Alert", messageType);   
+    }
+    
+    public void runSecondJFrame(){
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            Windows program = new UserViewGUI(currentUser);
+            program.display();
+        }); 
+    }
      
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -337,4 +315,5 @@ public class MiniTwitterGUI extends javax.swing.JFrame {
     private javax.swing.JButton showPositivePercentage;
     private javax.swing.JButton showUserTotal;
     // End of variables declaration//GEN-END:variables
+
 }
