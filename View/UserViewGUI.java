@@ -1,23 +1,25 @@
 package View;
 
 import Interfaces.Windows;
+import Model.Followings;
 import Model.User;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 public class UserViewGUI extends javax.swing.JFrame implements Windows {
 
     private User user;
-    DefaultListModel list1;
-    DefaultListModel list2;
+    DefaultListModel followings;
+    DefaultListModel newsFeed;
     /**
      * Creates new form UserViewGUI
      */
     public UserViewGUI(User currentUser) {
         
         this.user = currentUser;
-        list1 = new DefaultListModel();
-        list2 = new DefaultListModel();
+        this.followings = new DefaultListModel();
+        this.newsFeed = new DefaultListModel();
     }
 
     /**
@@ -33,12 +35,12 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         userID = new javax.swing.JTextArea();
         postTweet = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        currentFollowing = new javax.swing.JList<>();
+        currentFollowingJList = new javax.swing.JList<>();
         jScrollPane3 = new javax.swing.JScrollPane();
         TweetMessage = new javax.swing.JTextArea();
         followUser = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
-        newsFeed = new javax.swing.JList<>();
+        newsFeedJList = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -48,9 +50,9 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
 
         postTweet.setText("POST TWEET");
 
-        jScrollPane2.setViewportView(currentFollowing);
-        list1.addElement("Followers");
-        currentFollowing.setModel(list1);
+        jScrollPane2.setViewportView(currentFollowingJList);
+        followings.addElement("Followings");
+        currentFollowingJList.setModel(followings);
 
         TweetMessage.setColumns(10);
         TweetMessage.setRows(5);
@@ -58,9 +60,9 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
 
         followUser.setText("FOLLOW USER");
 
-        jScrollPane4.setViewportView(newsFeed);
-        list2.addElement("NewsFeed");
-        newsFeed.setModel(list2);
+        jScrollPane4.setViewportView(newsFeedJList);
+        newsFeed.addElement("NewsFeed");
+        newsFeedJList.setModel(newsFeed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -117,6 +119,27 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         initComponents();
         this.setVisible(true);
         this.setTitle(user.toString());
+        
+        updateFollowings();
+        updateNewsFeed();
+    }
+    
+    public void updateFollowings(){
+        
+        List<User> currentFollowings = user.getFollowings().getFollowings();
+        
+        for(User each: currentFollowings){
+            followings.addElement(each);
+        }
+    }
+    
+    public void updateNewsFeed(){
+        
+         List<String> currentNewsFeed = user.getNewsfeed().getNews();
+        
+        for(String each: currentNewsFeed){
+            this.newsFeed.addElement(each);
+        }
     }
     
     @Override
@@ -126,13 +149,13 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea TweetMessage;
-    private javax.swing.JList<String> currentFollowing;
+    private javax.swing.JList<String> currentFollowingJList;
     private javax.swing.JButton followUser;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JList<String> newsFeed;
+    private javax.swing.JList<String> newsFeedJList;
     private javax.swing.JButton postTweet;
     private javax.swing.JTextArea userID;
     // End of variables declaration//GEN-END:variables
