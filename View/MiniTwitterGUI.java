@@ -4,7 +4,9 @@ import Interfaces.Windows;
 import Model.UserGroup;
 import Model.User;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -12,9 +14,11 @@ import minitwitter.CustomTreeCellRenderer;
 
 public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
     
+    //private UserViewGUI FrameB;
+    
     //JTree
-    private DefaultMutableTreeNode root;
-    private DefaultTreeModel model;
+    protected DefaultMutableTreeNode root;
+    protected DefaultTreeModel model;
     private DefaultMutableTreeNode  currentUserTreeNode;
     private DefaultMutableTreeNode currentGroupTreeNode;
     
@@ -23,9 +27,8 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
     private UserGroup currentGroup;
     private User currentUser;
     
-    private List<String> users;
+    protected Map<String,UserViewGUI> users;
     private List<String> groups;
-    private List<UserViewGUI> usersInterface;
     
     /**
      * Creates new form MiniTwitterGUI
@@ -39,11 +42,9 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
         currentGroupTreeNode = root;
         model = new DefaultTreeModel(root); 
         
-        users = new ArrayList<>();
-        usersInterface = new ArrayList<>();
+        users = new HashMap<>();
         groups = new ArrayList<>();
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -243,7 +244,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
         }
         else{
             User currentUser = new User(inputText);
-            users.add(inputText);
+            users.put(inputText, new UserViewGUI(currentUser));
             currentGroup.AddUser(currentUser);
             
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(currentUser, false);
@@ -256,11 +257,12 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
 
     public boolean usernameAvailability(String userName){
         
-         for(String eachUser : users){
-             if(eachUser.equals(userName))
+        for (String eachUser : users.keySet()){
+            if(eachUser.equals(userName))
                  return false;
-         }
-         return true;
+        }
+        
+        return true;
     }
     
     public boolean groupNameAvailability(String groupName){
@@ -286,7 +288,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
         this.setVisible(true);
     }
     
-    @Override
+    //@Override
     public void PopUpMessage(String message, int messageType){
         JOptionPane.showMessageDialog(null, message, "Alert", messageType);   
     }
@@ -294,8 +296,17 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
     public void runSecondJFrame(){
         
         java.awt.EventQueue.invokeLater(() -> {
-            Windows program = new UserViewGUI(currentUser);
-            program.display();
+            
+            for (Map.Entry<String, UserViewGUI> entry : users.entrySet()) {
+                String key = entry.getKey();
+                UserViewGUI value = entry.getValue();
+                
+                if(currentUser.getUniqueID().equals(key)){
+                    value.setFrame(this);
+                    value.display();
+                    break;
+                }
+            }     
         }); 
     }
      

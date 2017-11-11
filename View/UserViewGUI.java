@@ -1,14 +1,17 @@
 package View;
 
 import Interfaces.Windows;
-import Model.Followings;
 import Model.User;
+import java.util.Enumeration;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class UserViewGUI extends javax.swing.JFrame implements Windows {
 
+    private MiniTwitterGUI FrameA;
+    
     private User user;
     DefaultListModel followings;
     DefaultListModel newsFeed;
@@ -16,12 +19,21 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
      * Creates new form UserViewGUI
      */
     public UserViewGUI(User currentUser) {
-        
         this.user = currentUser;
         this.followings = new DefaultListModel();
         this.newsFeed = new DefaultListModel();
+        
+        initComponents();
     }
-
+    
+    public void setFrame(MiniTwitterGUI FrameA) {
+        this.FrameA = FrameA;
+    }
+    
+    public void PopUpMessage(String message, int messageType){
+          JOptionPane.showMessageDialog(null, message, "Alert", messageType);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -49,9 +61,13 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         jScrollPane1.setViewportView(userID);
 
         postTweet.setText("POST TWEET");
+        postTweet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                postTweetActionPerformed(evt);
+            }
+        });
 
         jScrollPane2.setViewportView(currentFollowingJList);
-        followings.addElement("Followings");
         currentFollowingJList.setModel(followings);
 
         TweetMessage.setColumns(10);
@@ -59,9 +75,13 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         jScrollPane3.setViewportView(TweetMessage);
 
         followUser.setText("FOLLOW USER");
+        followUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                followUserActionPerformed(evt);
+            }
+        });
 
         jScrollPane4.setViewportView(newsFeedJList);
-        newsFeed.addElement("NewsFeed");
         newsFeedJList.setModel(newsFeed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -113,27 +133,67 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void followUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followUserActionPerformed
+        
+        //check if user exists
+        User tryingtoFollow = TraverseJTree(userID.getText());
+        
+        if(tryingtoFollow == null){
+            PopUpMessage("User does not exist OR You can't follow yourself", JOptionPane.WARNING_MESSAGE);
+        }
+        else if (!user.Follow(tryingtoFollow)){
+            updateFollowingList(tryingtoFollow);
+            tryingtoFollow.beFollowed(user);
+        }
+        else{
+            PopUpMessage("You are already following this user", JOptionPane.WARNING_MESSAGE);
+        }
+        
+        System.out.println("User: " + user.getUniqueID());
+        System.out.println("Followings" + user.getFollowings().getListFollowings());
+        System.out.println("Followers" + user.getFollowers().getListFollowers());
+                
+        
+    }//GEN-LAST:event_followUserActionPerformed
+
+    private void postTweetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_postTweetActionPerformed
+        user.tweet(TweetMessage.getText());
+        UpdateNewsFeedList(user.getLastTweet());
+        UpdateEveryonesGUI();
+    }//GEN-LAST:event_postTweetActionPerformed
+
     @Override
     public void display() {
         
-        initComponents();
-        this.setVisible(true);
-        this.setTitle(user.toString());
+        followings.clear();
+        newsFeed.clear();
+        followings.addElement("Followings");
+        newsFeed.addElement("NewsFeed");
+        initialUpdateFollowings();
+        initialUpdateNewsFeed();
         
-        updateFollowings();
-        updateNewsFeed();
+        this.setTitle(user.toString());
+        this.setVisible(true);
     }
     
-    public void updateFollowings(){
+    public void updateFollowingList(User newFollowing){
+        followings.addElement(newFollowing);
+    }
+    
+    public void initialUpdateFollowings(){
         
-        List<User> currentFollowings = user.getFollowings().getFollowings();
+        List<User> currentFollowings = user.getFollowings().getListFollowings();
         
         for(User each: currentFollowings){
             followings.addElement(each);
         }
     }
     
-    public void updateNewsFeed(){
+    public void UpdateNewsFeedList(String newNews){
+        newsFeed.addElement(newNews);
+    }
+    
+    public void initialUpdateNewsFeed(){ 
         
          List<String> currentNewsFeed = user.getNewsfeed().getNews();
         
@@ -141,10 +201,36 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
             this.newsFeed.addElement(each);
         }
     }
+    public void  UpdateEveryonesGUI(){
+        
+        List<User> currentFollowers = user.getFollowers().getListFollowers();
+        
+        for (UserViewGUI value : FrameA.users.values()) {
+            
+            if(!value.equals(this) || currentFollowers.contains(value.user)){
+                value.UpdateNewsFeedList(value.user.getLastTweet());
+            }
+        }
+    }
     
-    @Override
-    public void PopUpMessage(String message, int messageType){
-          JOptionPane.showMessageDialog(null, message, "Alert", messageType);
+    public User TraverseJTree(String userName){
+        
+        Enumeration en = FrameA.root.depthFirstEnumeration();
+        while (en.hasMoreElements()) {
+            
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) en.nextElement();
+
+            if(node.getUserObject() instanceof User){
+               User currentUser = (User) node.getUserObject();
+               
+                if(currentUser.getUniqueID().equals(userName) && !currentUser.getUniqueID().equals(user.getUniqueID())){
+                    return currentUser;
+                }
+            }
+
+        }
+        
+        return null;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

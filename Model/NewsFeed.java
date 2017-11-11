@@ -19,4 +19,11 @@ public class NewsFeed {
     public void setNews(List<String> news) {
         this.news = news;
     }
+    
+    public void addNews(String message){
+        news.add(message);
+    }
+    public String getLastNews(){
+        return news.get(news.size()- 1); 
+    }
 }

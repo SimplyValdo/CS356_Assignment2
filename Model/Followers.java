@@ -12,11 +12,15 @@ public class Followers {
         this.followers = new ArrayList<>();
     }
 
-    public List<User> getFollowers() {
+    public List<User> getListFollowers() {
         return followers;
     }
 
-    public void setFollowers(List<User> followers) {
+    public void setListFollowers(List<User> followers) {
         this.followers = followers;
+    }
+    
+    public void addNewFollower(User user){
+        followers.add(user);
     }
 }

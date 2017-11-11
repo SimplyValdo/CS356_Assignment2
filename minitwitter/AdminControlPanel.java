@@ -2,6 +2,7 @@ package minitwitter;
 
 import View.MiniTwitterGUI;
 import Interfaces.Windows;
+import View.UserViewGUI;
 
 public class AdminControlPanel {
     
@@ -27,8 +28,8 @@ public class AdminControlPanel {
     public void runFirstJFrame(){
         
         java.awt.EventQueue.invokeLater(() -> {
-            Windows program = new MiniTwitterGUI();
-            program.display();
+            Windows main = new MiniTwitterGUI();
+            main.display();
         }); 
     }
 }
