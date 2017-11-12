@@ -1,4 +1,4 @@
-package minitwitter;
+package Main;
 
 import View.MiniTwitterGUI;
 import Interfaces.Windows;
@@ -25,6 +25,7 @@ public class AdminControlPanel {
         return instance;
     }
     
+    //Open Main Window on a different Thread
     public void runFirstJFrame(){
         
         java.awt.EventQueue.invokeLater(() -> {

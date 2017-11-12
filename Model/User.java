@@ -2,21 +2,24 @@ package Model;
 
 import DesignPatterns.CompositePattern;
 import DesignPatterns.ObserverPattern;
+import DesignPatterns.Visitable;
+import DesignPatterns.Visitor;
+import DesignPatterns.Subject;
 import java.util.ArrayList;
 import java.util.List;
-import minitwitter.Subject;
+
+/************************************************
+ * This class is using two Design Patterns
+ * CompositePattern, ObserverPattern
+************************************************/
 
 public class User extends Subject implements CompositePattern, ObserverPattern  { 
     
     private String uniqueID;
-    //private List<User> followers; //Observer
-    //private List<User> followings; //Subject
-    //private List<String> newsFeed; //Updating
     
     //The User is the Observer/Subject
     //Followers are the Observer
     //Followings are the Subject
-    
     //Scenerio # 1: [User ->Observer] , You are watching the [followings -> Subject]
     //Scenerio # 2: [User -> Subject], You are being watch by the [Followers -> Observer]
     
@@ -32,15 +35,12 @@ public class User extends Subject implements CompositePattern, ObserverPattern  
         this.newsfeed = new NewsFeed();
     }
 
+    //Used for CompositePattern
     @Override
     public String getUniqueID() {
         return uniqueID;
     }
 
-    public void setUniqueID(String uniqueID) {
-        this.uniqueID = uniqueID;
-    }
-    
     public String toString(){
         return this.uniqueID;
     }
@@ -49,26 +49,14 @@ public class User extends Subject implements CompositePattern, ObserverPattern  
         return followers;
     }
 
-    public void setFollowers(Followers followers) {
-        this.followers = followers;
-    }
-
     public Followings getFollowings() {
         return followings;
-    }
-
-    public void setFollowings(Followings followings) {
-        this.followings = followings;
     }
 
     public NewsFeed getNewsfeed() {
         return newsfeed;
     }
 
-    public void setNewsfeed(NewsFeed newsfeed) {
-        this.newsfeed = newsfeed;
-    }
-    
     public boolean Follow(User user){
         user.attach(this);
         return followings.addNewFollowings(user);
@@ -87,6 +75,7 @@ public class User extends Subject implements CompositePattern, ObserverPattern  
         return newsfeed.getLastNews();
     }
 
+    //Used for ObserverPattern
     @Override
     public void update(Subject subject) {
         if (subject instanceof User) {

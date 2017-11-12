@@ -1,4 +1,4 @@
-package minitwitter;
+package DesignPatterns;
 
 import DesignPatterns.ObserverPattern;
 import java.util.ArrayList;

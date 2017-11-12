@@ -1,7 +1,7 @@
 package View;
 
-import Interfaces.Windows;
 import Model.User;
+import Interfaces.Windows;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -10,8 +10,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class UserViewGUI extends javax.swing.JFrame implements Windows {
 
+    //Main JFrame reference
     private MiniTwitterGUI FrameA;
     
+    //Define current's User with followings & newsFeed
     private User user;
     DefaultListModel followings;
     DefaultListModel newsFeed;
@@ -26,10 +28,13 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         initComponents();
     }
     
-    public void setFrame(MiniTwitterGUI FrameA) {
-        this.FrameA = FrameA;
+    //Save reference from the main JFrame
+    @Override
+    public void setFrame(Windows frame) {
+        this.FrameA = (MiniTwitterGUI) frame;
     }
     
+    //Have a popup show up with a message and messageType
     public void PopUpMessage(String message, int messageType){
           JOptionPane.showMessageDialog(null, message, "Alert", messageType);
     }
@@ -133,22 +138,33 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Follow specific a user
     private void followUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followUserActionPerformed
         
-        //check if user exists
+        //Grab User's object from the person you want to follow
         User tryingtoFollow = TraverseJTree(userID.getText());
         
-        if(tryingtoFollow == null){
-            PopUpMessage("User does not exist OR You can't follow yourself", JOptionPane.WARNING_MESSAGE);
+        //Verify if user exists
+        if(user.getUniqueID().equals(userID.getText())){
+            PopUpMessage("You can't follow yourself", JOptionPane.WARNING_MESSAGE);
         }
+        else if(tryingtoFollow == null){
+            PopUpMessage("User does not exist", JOptionPane.WARNING_MESSAGE);
+        }
+        //Returns false if you have not followed user yet
         else if (!user.Follow(tryingtoFollow)){
+            
+            //Update JList widget & Followers list
             updateFollowingList(tryingtoFollow);
             tryingtoFollow.beFollowed(user);
+            userID.setText(null);
         }
+        //You are already following user
         else{
             PopUpMessage("You are already following this user", JOptionPane.WARNING_MESSAGE);
         }
         
+        //For Debugging purposes
         System.out.println("User: " + user.getUniqueID());
         System.out.println("Followings" + user.getFollowings().getListFollowings());
         System.out.println("Followers" + user.getFollowers().getListFollowers());
@@ -156,12 +172,19 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         
     }//GEN-LAST:event_followUserActionPerformed
 
+    //User posted a new tweet
     private void postTweetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_postTweetActionPerformed
-        user.tweet(TweetMessage.getText());
+        
+        //Update JList & Update everyone that is following currentUser
+        user.tweet(user.getUniqueID() + ": " + TweetMessage.getText());
         UpdateNewsFeedList(user.getLastTweet());
         UpdateEveryonesGUI();
+        FrameA.tweetSize.addOne();
+        FrameA.positiveSize.checkPositiveTweet(TweetMessage.getText());
+        TweetMessage.setText(null);
     }//GEN-LAST:event_postTweetActionPerformed
 
+    //Load GUI and refresh JList: Followings/NewsFeed 
     @Override
     public void display() {
         
@@ -176,10 +199,12 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         this.setVisible(true);
     }
     
+    //Update list when a user follows a new person
     public void updateFollowingList(User newFollowing){
-        followings.addElement(newFollowing);
+        followings.add(1, newFollowing);
     }
     
+    //Load all folowings from the list into JList
     public void initialUpdateFollowings(){
         
         List<User> currentFollowings = user.getFollowings().getListFollowings();
@@ -189,10 +214,12 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         }
     }
     
+    //Update list when a tweet is made
     public void UpdateNewsFeedList(String newNews){
-        newsFeed.addElement(newNews);
+        newsFeed.add(1, newNews);
     }
     
+    //Load all newsFeed from the list into JList
     public void initialUpdateNewsFeed(){ 
         
          List<String> currentNewsFeed = user.getNewsfeed().getNews();
@@ -201,18 +228,22 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
             this.newsFeed.addElement(each);
         }
     }
-    public void  UpdateEveryonesGUI(){
+    //Update your Followers Newsfeed JList
+    public void UpdateEveryonesGUI(){
         
         List<User> currentFollowers = user.getFollowers().getListFollowers();
         
-        for (UserViewGUI value : FrameA.users.values()) {
+        for (Windows value : FrameA.users.values()) {
             
-            if(!value.equals(this) || currentFollowers.contains(value.user)){
-                value.UpdateNewsFeedList(value.user.getLastTweet());
+            UserViewGUI eachUser = (UserViewGUI) value;
+            
+            if(!eachUser.equals(this) && currentFollowers.contains(eachUser.user)){
+                eachUser.UpdateNewsFeedList(eachUser.user.getLastTweet());
             }
         }
     }
     
+    //Search for a user by Traversing on Jtree
     public User TraverseJTree(String userName){
         
         Enumeration en = FrameA.root.depthFirstEnumeration();
@@ -227,7 +258,6 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
                     return currentUser;
                 }
             }
-
         }
         
         return null;

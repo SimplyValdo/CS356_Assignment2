@@ -1,10 +1,14 @@
-package minitwitter;
+package View;
 
 import Model.UserGroup;
 import java.awt.Component;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+
+/****************************************************
+ * This class is to set custom Icons on JTREE
+****************************************************/
 
 public class CustomTreeCellRenderer extends DefaultTreeCellRenderer{
     

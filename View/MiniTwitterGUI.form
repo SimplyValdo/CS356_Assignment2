@@ -172,21 +172,33 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="SHOW USER TOTAL"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showUserTotalActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="showMessagesTotal">
       <Properties>
         <Property name="text" type="java.lang.String" value="SHOW MESSAGES TOTAL"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showMessagesTotalActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="showPositivePercentage">
       <Properties>
         <Property name="text" type="java.lang.String" value="SHOW POSITIVE PERCENTAGE"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showPositivePercentageActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="showGroupTotal">
       <Properties>
         <Property name="text" type="java.lang.String" value="SHOW GROUP TOTAL"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showGroupTotalActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

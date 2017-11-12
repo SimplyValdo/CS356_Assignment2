@@ -1,7 +1,7 @@
 package Model;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 public class Followings {
     
@@ -16,10 +16,6 @@ public class Followings {
         return followings;
     }
 
-    public void setListFollowings(List<User> followings) {
-        this.followings = followings;
-    }
-    
     public boolean addNewFollowings(User user){
         if(!AlreadyFollowing(user)){
             followings.add(user);

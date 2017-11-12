@@ -1,8 +1,13 @@
 package View;
 
-import Interfaces.Windows;
 import Model.UserGroup;
 import Model.User;
+import Interfaces.Windows;
+import DesignPatterns.Visitor;
+import VisitorComponents.GroupSize;
+import VisitorComponents.PositiveSize;
+import VisitorComponents.TweetSize;
+import VisitorComponents.UserSize;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +15,11 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import minitwitter.CustomTreeCellRenderer;
 
-public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
+public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visitor {
     
-    //private UserViewGUI FrameB;
+    //Have access to another JFrame (If needed)
+    private Windows FrameB;
     
     //JTree
     protected DefaultMutableTreeNode root;
@@ -27,24 +32,47 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
     private UserGroup currentGroup;
     private User currentUser;
     
-    protected Map<String,UserViewGUI> users;
+    //Save references of users & groups
+    protected Map<String,Windows> users;
     private List<String> groups;
+    
+    //Define Visitor Components
+    private GroupSize groupSize;
+    private UserSize userSize;
+    protected TweetSize tweetSize;
+    protected PositiveSize positiveSize;
     
     /**
      * Creates new form MiniTwitterGUI
      */
     public MiniTwitterGUI() {
        
+        //Create Root Group
         rootGroup = new UserGroup("Root");
         currentGroup = rootGroup;
         
+        //Add Root Group --> Tree Node --> Tree Model
         root = new DefaultMutableTreeNode(rootGroup, true);
         currentGroupTreeNode = root;
         model = new DefaultTreeModel(root); 
         
         users = new HashMap<>();
         groups = new ArrayList<>();
+        
+        groupSize = new GroupSize();
+        userSize = new UserSize();
+        tweetSize = new TweetSize();
+        positiveSize = new PositiveSize();
+        
+        //Start at size one since we created a Root
+        groupSize.AddOne();
     }
+    
+    @Override
+    public void setFrame(Windows frame) {
+        this.FrameB = frame;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -109,12 +137,32 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
         });
 
         showUserTotal.setText("SHOW USER TOTAL");
+        showUserTotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showUserTotalActionPerformed(evt);
+            }
+        });
 
         showMessagesTotal.setText("SHOW MESSAGES TOTAL");
+        showMessagesTotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showMessagesTotalActionPerformed(evt);
+            }
+        });
 
         showPositivePercentage.setText("SHOW POSITIVE PERCENTAGE");
+        showPositivePercentage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showPositivePercentageActionPerformed(evt);
+            }
+        });
 
         showGroupTotal.setText("SHOW GROUP TOTAL");
+        showGroupTotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showGroupTotalActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -174,22 +222,29 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Add Group
     private void addGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addGroupActionPerformed
         
         String inputText = addGroupTextArea.getText();
         
+        //Check if TextBox is empty 
         if(inputText.isEmpty()){
             PopUpMessage("Group name is empty", JOptionPane.WARNING_MESSAGE);
         }
+        //Check if username is already taken
         else if(!usernameAvailability(inputText)){
             PopUpMessage("This Group name is not available", JOptionPane.WARNING_MESSAGE);
         }
+        //A group has been added succesfully
         else{
+            //Add group to current correspoding model class & Increase group counter
             UserGroup addingNewGroup = new UserGroup(inputText);
             groups.add(inputText);
             currentGroup.AddGroup(addingNewGroup);
             currentGroup = addingNewGroup;
+            groupSize.AddOne();
             
+            //Have group be able to have children & add it to JTree
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(addingNewGroup, true);
             currentGroupTreeNode.add(newNode);
             currentGroupTreeNode = newNode;
@@ -199,25 +254,33 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
         }
     }//GEN-LAST:event_addGroupActionPerformed
 
+    //Open highlighted user from JTree on a new JFrame
     private void openUserViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openUserViewActionPerformed
+        
+        //If a user has not been selected
         if(currentUserTreeNode == null){
             PopUpMessage("A user has not been selected", JOptionPane.WARNING_MESSAGE);
         }
         else{
+            //Open user's View
             runSecondJFrame();
         }
     }//GEN-LAST:event_openUserViewActionPerformed
 
+    //An event listener for JTree
     private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTree1ValueChanged
 
+        //Get Object reference when an item is selected from JTree
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) evt.getPath().getLastPathComponent();
-                
+              
+         //Grab if user has been selected
          if(node.getUserObject() instanceof User) {
-                    currentUser = (User) node.getUserObject();
-                    currentUserTreeNode = node;
-                    currentGroupTreeNode = (DefaultMutableTreeNode) node.getParent();
-                    currentGroup = (UserGroup) currentGroupTreeNode.getUserObject();
-                }
+            currentUser = (User) node.getUserObject();
+            currentUserTreeNode = node;
+            currentGroupTreeNode = (DefaultMutableTreeNode) node.getParent();
+            currentGroup = (UserGroup) currentGroupTreeNode.getUserObject();
+         }
+         //Grab if Group has been selected
          else{
              currentUser = null;
              currentUserTreeNode = null;
@@ -225,6 +288,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
              currentGroupTreeNode = node;   
          }
         
+         //For Debugging purposes
         System.out.println("CurrentUser: " + currentUser);
         System.out.println("CurrentUserTreeNode: " + currentUserTreeNode);
         System.out.println("CurrentGroup: " + currentGroup);
@@ -232,21 +296,28 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
         System.out.println("---------------------------------------------------");
     }//GEN-LAST:event_jTree1ValueChanged
 
+    //Add User
     private void addUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserActionPerformed
         
         String inputText = addUserTextArea.getText();
         
+        //Check if TextBox is empty 
         if(inputText.isEmpty()){
             PopUpMessage("Username is empty", JOptionPane.WARNING_MESSAGE);
         }
+        //Check if username is already taken
         else if(!usernameAvailability(inputText)){
             PopUpMessage("This Username is not available", JOptionPane.WARNING_MESSAGE);
         }
+        //A user has been added succesfully
         else{
+            //Add user to current correspoding model class & Increase user counter
             User currentUser = new User(inputText);
             users.put(inputText, new UserViewGUI(currentUser));
             currentGroup.AddUser(currentUser);
+            userSize.addOne();
             
+             //Disable user to be able to have children & add it to JTree
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(currentUser, false);
             currentGroupTreeNode.add(newNode);
             model.reload();
@@ -255,6 +326,40 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
         }
     }//GEN-LAST:event_addUserActionPerformed
 
+    //Display total amount of Users
+    private void showUserTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUserTotalActionPerformed
+        PopUpMessage("Total Users: " + Integer.toString(userSize.accept(this)), JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_showUserTotalActionPerformed
+
+    //Display total amount of Groups
+    private void showGroupTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGroupTotalActionPerformed
+        PopUpMessage("Total Groups: " + Integer.toString(groupSize.accept(this)), JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_showGroupTotalActionPerformed
+
+    //Display total amount of Messages
+    private void showMessagesTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showMessagesTotalActionPerformed
+        PopUpMessage("Total Messages: " + Integer.toString(tweetSize.accept(this)), JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_showMessagesTotalActionPerformed
+
+    //Display percentage of positive words
+    private void showPositivePercentageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPositivePercentageActionPerformed
+        
+        //Grab total positive & tweets  
+        int positiveCounter = positiveSize.accept(this);
+        int totalTweets = tweetSize.accept(this);
+        
+        if(totalTweets == 0){
+            PopUpMessage("No tweets yet", JOptionPane.ERROR_MESSAGE);
+        }
+        else{
+           
+            //Display percentage
+            double percent = ((double)positiveCounter/totalTweets) * 100;
+            PopUpMessage(Double.toString(percent) + "%", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_showPositivePercentageActionPerformed
+
+    //Check if username has been taken already for Users
     public boolean usernameAvailability(String userName){
         
         for (String eachUser : users.keySet()){
@@ -265,6 +370,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
         return true;
     }
     
+    //Check if username has been taken already for Groups
     public boolean groupNameAvailability(String groupName){
         
          for(String eachGroup : groups){
@@ -274,6 +380,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
          return true;
     }
     
+    //Expand everything on JTree
     public void expandJTree(){
         
         for (int i = 0; i < jTree1.getRowCount(); i++) {
@@ -281,25 +388,21 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
         }
     }
     
-    @Override
-    public void display() {
-        
-        initComponents();
-        this.setVisible(true);
-    }
-    
-    //@Override
+    //Have a popup show up with a message and messageType
     public void PopUpMessage(String message, int messageType){
         JOptionPane.showMessageDialog(null, message, "Alert", messageType);   
     }
     
+    //Run second JFrame as a different thread
     public void runSecondJFrame(){
         
         java.awt.EventQueue.invokeLater(() -> {
             
-            for (Map.Entry<String, UserViewGUI> entry : users.entrySet()) {
+            //Since the Users JFrame have been saved. Search for it and
+            //open the selected user's window
+            for (Map.Entry<String, Windows> entry : users.entrySet()) {
                 String key = entry.getKey();
-                UserViewGUI value = entry.getValue();
+                Windows value = entry.getValue();
                 
                 if(currentUser.getUniqueID().equals(key)){
                     value.setFrame(this);
@@ -309,8 +412,35 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
             }     
         }); 
     }
-     
+    
+    //Load all widgets from Swing & Make GUI show up
+    @Override
+    public void display() {
+        
+        initComponents();
+        this.setVisible(true);
+    }
+    
+    @Override
+    public int visit(UserSize userSize) {
+        return userSize.getSize();
+    }
 
+    @Override
+    public int visit(GroupSize groupSize) {
+       return groupSize.getSize();
+    }
+
+    @Override
+    public int visit(TweetSize tweetSize) {
+        return tweetSize.getTweetCounter();
+    }
+
+    @Override
+    public int visit(PositiveSize positivePercentage) {
+        return positivePercentage.getPositiveCounter();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addGroup;
     private javax.swing.JTextArea addGroupTextArea;
@@ -326,5 +456,4 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows {
     private javax.swing.JButton showPositivePercentage;
     private javax.swing.JButton showUserTotal;
     // End of variables declaration//GEN-END:variables
-
 }

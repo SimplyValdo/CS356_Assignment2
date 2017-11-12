@@ -2,8 +2,15 @@ package Model;
 
 import Model.User;
 import DesignPatterns.CompositePattern;
+import DesignPatterns.Visitable;
+import DesignPatterns.Visitor;
 import java.util.ArrayList;
 import java.util.List;
+
+/****************************************************
+ * This class is using only one Design Patterns
+ * CompositePattern
+****************************************************/
 
 public class UserGroup implements CompositePattern{
     
@@ -30,6 +37,7 @@ public class UserGroup implements CompositePattern{
         return this.uniqueID;
     }
     
+    //Used for CompositePattern
     @Override
     public String  getUniqueID() {
         return this.uniqueID;
