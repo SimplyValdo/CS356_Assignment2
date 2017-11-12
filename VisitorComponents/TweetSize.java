@@ -5,7 +5,7 @@ import DesignPatterns.Visitable;
 import DesignPatterns.Visitor;
 
 /****************************************************
- * This User class is using only one Design Patterns
+ * This class is using only one Design Patterns
  * VistorPattern
 ****************************************************/
 

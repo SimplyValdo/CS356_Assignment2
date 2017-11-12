@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /****************************************************
- * This User class is using only one Design Patterns
+ * This class is using only one Design Patterns
  * VistorPattern
 ****************************************************/
 
