@@ -15,8 +15,8 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
     
     //Define current's User with followings & newsFeed
     private User user;
-    DefaultListModel followings;
-    DefaultListModel newsFeed;
+    private DefaultListModel followings;
+    private DefaultListModel newsFeed;
     /**
      * Creates new form UserViewGUI
      */
@@ -144,10 +144,11 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         //Grab User's object from the person you want to follow
         User tryingtoFollow = TraverseJTree(userID.getText());
         
-        //Verify if user exists
+        //Its impossible to follow yourself
         if(user.getUniqueID().equals(userID.getText())){
             PopUpMessage("You can't follow yourself", JOptionPane.WARNING_MESSAGE);
         }
+        //Verify if user exists
         else if(tryingtoFollow == null){
             PopUpMessage("User does not exist", JOptionPane.WARNING_MESSAGE);
         }
