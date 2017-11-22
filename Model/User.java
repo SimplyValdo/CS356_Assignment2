@@ -6,6 +6,7 @@ import DesignPatterns.Visitable;
 import DesignPatterns.Visitor;
 import DesignPatterns.Subject;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /************************************************
@@ -16,6 +17,8 @@ import java.util.List;
 public class User extends Subject implements CompositePattern, ObserverPattern  { 
     
     private String uniqueID;
+    private long creationTimeStamp;
+    private long lastUpdateTimeStamp;
     
     //The User is the Observer/Subject
     //Followers are the Observer
@@ -33,6 +36,7 @@ public class User extends Subject implements CompositePattern, ObserverPattern  
         this.followers = new Followers();
         this.followings = new Followings();
         this.newsfeed = new NewsFeed();
+        this.creationTimeStamp = System.currentTimeMillis();
     }
 
     //Used for CompositePattern
@@ -40,7 +44,19 @@ public class User extends Subject implements CompositePattern, ObserverPattern  
     public String getUniqueID() {
         return uniqueID;
     }
+    
+    public long getTimeStampLong(){
+        return this.lastUpdateTimeStamp;
+    }
 
+    public String getTimeStamp() {
+        return new Date(this.creationTimeStamp).toString();
+    }
+    
+    public String getLastUpdateTime() {
+        return new Date(this.lastUpdateTimeStamp).toString();
+    }
+    
     public String toString(){
         return this.uniqueID;
     }
@@ -68,6 +84,7 @@ public class User extends Subject implements CompositePattern, ObserverPattern  
     
     public void tweet(String message){
         newsfeed.addNews(message);
+        lastUpdateTimeStamp = System.currentTimeMillis();
         notifyObservers();
     }
     

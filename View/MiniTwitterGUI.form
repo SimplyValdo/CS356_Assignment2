@@ -26,18 +26,20 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="321" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="openUserView" alignment="1" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="showUserTotal" max="32767" attributes="0"/>
                           <Component id="showMessagesTotal" pref="183" max="32767" attributes="0"/>
+                          <Component id="showUserTotal" alignment="0" pref="183" max="32767" attributes="0"/>
+                          <Component id="showMessagesTotal1" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" max="32767" attributes="0"/>
+                      <EmptySpace pref="50" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="showGroupTotal" max="32767" attributes="0"/>
                           <Component id="showPositivePercentage" max="32767" attributes="0"/>
+                          <Component id="showPositivePercentage1" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
@@ -50,9 +52,10 @@
                           <Component id="addGroup" alignment="1" min="-2" pref="175" max="-2" attributes="0"/>
                           <Component id="addUser" alignment="1" min="-2" pref="175" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -63,27 +66,33 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane2" min="-2" max="-2" attributes="0"/>
-                          <Component id="addUser" pref="102" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="addGroup" max="32767" attributes="0"/>
-                          <Component id="jScrollPane3" max="32767" attributes="0"/>
+                          <Component id="jScrollPane2" max="32767" attributes="0"/>
+                          <Component id="addUser" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jScrollPane3" min="-2" max="-2" attributes="0"/>
+                          <Component id="addGroup" min="-2" pref="96" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="openUserView" min="-2" pref="70" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="showUserTotal" pref="73" max="32767" attributes="0"/>
-                          <Component id="showGroupTotal" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="showUserTotal" alignment="3" min="-2" pref="73" max="-2" attributes="0"/>
+                          <Component id="showGroupTotal" alignment="3" min="-2" pref="73" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="showMessagesTotal" alignment="3" min="-2" pref="71" max="-2" attributes="0"/>
+                          <Component id="showPositivePercentage" alignment="3" min="-2" pref="71" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="showMessagesTotal" pref="72" max="32767" attributes="0"/>
-                          <Component id="showPositivePercentage" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="showMessagesTotal1" alignment="3" min="-2" pref="71" max="-2" attributes="0"/>
+                          <Component id="showPositivePercentage1" alignment="3" min="-2" pref="71" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -198,6 +207,22 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showGroupTotalActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="showMessagesTotal1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="VALIDATE"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showValidationPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="showPositivePercentage1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="SHOW LAST UPDATED USER"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showLastUpdatedUserActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

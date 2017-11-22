@@ -9,9 +9,12 @@ import VisitorComponents.PositiveSize;
 import VisitorComponents.TweetSize;
 import VisitorComponents.UserSize;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -35,6 +38,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
     //Save references of users & groups
     protected Map<String,Windows> users;
     private List<String> groups;
+    protected String lastUpdatedUser;
     
     //Define Visitor Components
     private GroupSize groupSize;
@@ -95,6 +99,8 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
         showMessagesTotal = new javax.swing.JButton();
         showPositivePercentage = new javax.swing.JButton();
         showGroupTotal = new javax.swing.JButton();
+        showMessagesTotal1 = new javax.swing.JButton();
+        showPositivePercentage1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -164,6 +170,20 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
             }
         });
 
+        showMessagesTotal1.setText("VALIDATE");
+        showMessagesTotal1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showValidationPerformed(evt);
+            }
+        });
+
+        showPositivePercentage1.setText("SHOW LAST UPDATED USER");
+        showPositivePercentage1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showLastUpdatedUserActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -171,17 +191,19 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(openUserView, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(showUserTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(showMessagesTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE))
-                        .addGap(18, 18, Short.MAX_VALUE)
+                            .addComponent(showMessagesTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                            .addComponent(showUserTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                            .addComponent(showMessagesTotal1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(showGroupTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(showPositivePercentage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(showPositivePercentage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(showPositivePercentage1)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2)
@@ -189,8 +211,9 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
                         .addGap(37, 37, 37)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(addGroup, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(addUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(21, 21, 21))
+                            .addComponent(addUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(2, 2, 2)))
+                .addGap(19, 19, 19))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -199,23 +222,28 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(addUser, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(addGroup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane3))
+                            .addComponent(jScrollPane2)
+                            .addComponent(addUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(38, 38, 38)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(addGroup, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(openUserView, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(showUserTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
-                            .addComponent(showGroupTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(showUserTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(showGroupTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(showMessagesTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(showPositivePercentage, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(showMessagesTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
-                            .addComponent(showPositivePercentage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(showMessagesTotal1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(showPositivePercentage1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -232,7 +260,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
             PopUpMessage("Group name is empty", JOptionPane.WARNING_MESSAGE);
         }
         //Check if username is already taken
-        else if(!usernameAvailability(inputText)){
+        else if(!groupNameAvailability(inputText)){
             PopUpMessage("This Group name is not available", JOptionPane.WARNING_MESSAGE);
         }
         //A group has been added succesfully
@@ -359,25 +387,68 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
         }
     }//GEN-LAST:event_showPositivePercentageActionPerformed
 
+    private void showLastUpdatedUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showLastUpdatedUserActionPerformed
+        
+        /*if(lastUpdatedUser ==  null){
+            PopUpMessage("Not Last Update Found", JOptionPane.INFORMATION_MESSAGE);
+        }
+        else{
+            PopUpMessage(lastUpdatedUser, JOptionPane.INFORMATION_MESSAGE);
+        }*/
+        
+        String latest = getLatestUser();
+   
+        if(latest == null){
+            PopUpMessage("Not Last Update Found", JOptionPane.INFORMATION_MESSAGE);
+        }
+        else{
+            PopUpMessage(latest, JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        
+    }//GEN-LAST:event_showLastUpdatedUserActionPerformed
+
+    private void showValidationPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showValidationPerformed
+        
+        if(checkValidation()){
+            PopUpMessage("ID verification: VALID", JOptionPane.INFORMATION_MESSAGE);
+        }
+        else{
+            PopUpMessage("ID verification: NOT VALID", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_showValidationPerformed
+
     //Check if username has been taken already for Users
     public boolean usernameAvailability(String userName){
         
-        for (String eachUser : users.keySet()){
-            if(eachUser.equals(userName))
-                 return false;
-        }
-        
-        return true;
+        return !users.containsKey(userName);    
     }
     
     //Check if username has been taken already for Groups
     public boolean groupNameAvailability(String groupName){
         
-         for(String eachGroup : groups){
-             if(eachGroup.equals(groupName))
+        return !groups.contains(groupName);   
+    }
+    
+    public boolean checkValidation(){
+        
+        Set<String> IDs = new HashSet<>();
+        
+         for(String eachUser : users.keySet()){
+            if(IDs.contains(eachUser) || !eachUser.matches("\\S+")){
+                return false;
+            }
+            
+            IDs.add(eachUser);
+        }
+         
+        for(String eachGroup : groups){
+             if(IDs.contains(eachGroup) || !eachGroup.matches("\\S+")){
                  return false;
+             }
          }
-         return true;
+        
+        return true;
     }
     
     //Expand everything on JTree
@@ -411,6 +482,34 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
                 }
             }     
         }); 
+    }
+    
+    public String getLatestUser(){
+        
+        String user = "";
+        long temp = 0;
+        
+        Enumeration en = root.depthFirstEnumeration();
+        
+        while (en.hasMoreElements()) {
+            
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) en.nextElement();
+
+            if(node.getUserObject() instanceof User){
+               User currentUser = (User) node.getUserObject();
+               
+                if(currentUser.getTimeStampLong() > temp){
+                    temp = currentUser.getTimeStampLong();
+                    user = currentUser.getUniqueID();
+                }
+            }
+        }
+        
+        if(temp == 0){
+            return null;
+        }
+        
+        return user;
     }
     
     //Load all widgets from Swing & Make GUI show up
@@ -453,7 +552,9 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
     private javax.swing.JButton openUserView;
     private javax.swing.JButton showGroupTotal;
     private javax.swing.JButton showMessagesTotal;
+    private javax.swing.JButton showMessagesTotal1;
     private javax.swing.JButton showPositivePercentage;
+    private javax.swing.JButton showPositivePercentage1;
     private javax.swing.JButton showUserTotal;
     // End of variables declaration//GEN-END:variables
 }
