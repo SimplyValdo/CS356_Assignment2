@@ -2,7 +2,6 @@ package Main;
 
 import View.MiniTwitterGUI;
 import Interfaces.Windows;
-import View.UserViewGUI;
 
 public class AdminControlPanel {
     

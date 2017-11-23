@@ -1,7 +1,5 @@
 package DesignPatterns;
 
-import Model.User;
-import Model.UserGroup;
 import VisitorComponents.GroupSize;
 import VisitorComponents.PositiveSize;
 import VisitorComponents.TweetSize;

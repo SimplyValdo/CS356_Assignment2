@@ -2,12 +2,8 @@ package Model;
 
 import DesignPatterns.CompositePattern;
 import DesignPatterns.ObserverPattern;
-import DesignPatterns.Visitable;
-import DesignPatterns.Visitor;
 import DesignPatterns.Subject;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /************************************************
  * This class is using two Design Patterns
@@ -96,7 +92,8 @@ public class User extends Subject implements CompositePattern, ObserverPattern  
     @Override
     public void update(Subject subject) {
         if (subject instanceof User) {
-            this.newsfeed.addNews(((User)subject).getLastTweet());        
+            this.newsfeed.addNews(((User)subject).getLastTweet());
+            this.lastUpdateTimeStamp = ((User) subject).lastUpdateTimeStamp;
         }
     }
 }

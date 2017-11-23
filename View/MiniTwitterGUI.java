@@ -18,6 +18,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visitor {
     
@@ -39,6 +40,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
     protected Map<String,Windows> users;
     private List<String> groups;
     protected String lastUpdatedUser;
+    private TreePath jTreeCurrentSelection;
     
     //Define Visitor Components
     private GroupSize groupSize;
@@ -278,6 +280,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
             currentGroupTreeNode = newNode;
             model.reload();
             expandJTree();
+            jTree1.setSelectionPath(new TreePath(model.getPathToRoot(newNode)));
             addGroupTextArea.setText(null);
         }
     }//GEN-LAST:event_addGroupActionPerformed
@@ -317,11 +320,11 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
          }
         
          //For Debugging purposes
-        System.out.println("CurrentUser: " + currentUser);
+        /*System.out.println("CurrentUser: " + currentUser);
         System.out.println("CurrentUserTreeNode: " + currentUserTreeNode);
         System.out.println("CurrentGroup: " + currentGroup);
         System.out.println("CurrentGroupTreeNode: " + currentGroupTreeNode);
-        System.out.println("---------------------------------------------------");
+        System.out.println("---------------------------------------------------");*/
     }//GEN-LAST:event_jTree1ValueChanged
 
     //Add User
@@ -350,6 +353,7 @@ public class MiniTwitterGUI extends javax.swing.JFrame implements Windows, Visit
             currentGroupTreeNode.add(newNode);
             model.reload();
             expandJTree();
+            jTree1.setSelectionPath(new TreePath(model.getPathToRoot(newNode)));
             addUserTextArea.setText(null);
         }
     }//GEN-LAST:event_addUserActionPerformed

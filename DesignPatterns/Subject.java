@@ -1,12 +1,11 @@
 package DesignPatterns;
 
-import DesignPatterns.ObserverPattern;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Subject {
     
-    private List<ObserverPattern> observers = new ArrayList<ObserverPattern>();
+    private List<ObserverPattern> observers = new ArrayList<>();
 	
 	public void attach(ObserverPattern observer) {
 		observers.add(observer);

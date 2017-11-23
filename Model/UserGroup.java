@@ -1,9 +1,6 @@
 package Model;
 
-import Model.User;
 import DesignPatterns.CompositePattern;
-import DesignPatterns.Visitable;
-import DesignPatterns.Visitor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,5 +50,6 @@ public class UserGroup implements CompositePattern{
     
     public void printCreationTime(){
         System.out.println( this.uniqueID + ": Creation Group Time - " + getTimeStamp());
+        System.out.println("---------------------------------------------------");
     }
 }

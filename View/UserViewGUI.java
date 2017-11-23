@@ -187,6 +187,7 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
         System.out.println("User: " + user.getUniqueID());
         System.out.println("Followings" + user.getFollowings().getListFollowings());
         System.out.println("Followers" + user.getFollowers().getListFollowers());
+        System.out.println("---------------------------------------------------");
                 
         
     }//GEN-LAST:event_followUserActionPerformed
@@ -194,14 +195,16 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
     //User posted a new tweet
     private void postTweetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_postTweetActionPerformed
         
-        //Update JList & Update everyone that is following currentUser
+        //Update JList, Last Update Time Tweet & Update everyone that is following currentUser
         user.tweet(user.getUniqueID() + ": " + TweetMessage.getText());
         UpdateNewsFeedList(user.getLastTweet());
+        lastUpdateTimeLabel.setText("Last Tweet: " + user.getLastUpdateTime());
         UpdateEveryonesGUI();
+        
         FrameA.tweetSize.addOne();
         FrameA.positiveSize.checkPositiveTweet(TweetMessage.getText());
         FrameA.lastUpdatedUser = user.getUniqueID();
-        lastUpdateTimeLabel.setText("Last Tweet: " + user.getLastUpdateTime());
+        
         TweetMessage.setText(null);
     }//GEN-LAST:event_postTweetActionPerformed
 
@@ -250,7 +253,7 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
             this.newsFeed.addElement(each);
         }
     }
-    //Update your Followers Newsfeed JList
+    //Update your Followers Newsfeed JList & Last Tweet Time
     public void UpdateEveryonesGUI(){
         
         List<User> currentFollowers = user.getFollowers().getListFollowers();
@@ -261,6 +264,7 @@ public class UserViewGUI extends javax.swing.JFrame implements Windows {
             
             if(!eachUser.equals(this) && currentFollowers.contains(eachUser.user)){
                 eachUser.UpdateNewsFeedList(eachUser.user.getLastTweet());
+                eachUser.lastUpdateTimeLabel.setText("Last Tweet: " + eachUser.user.getLastUpdateTime());
             }
         }
     }
